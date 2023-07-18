@@ -1,9 +1,13 @@
-package data;
+package page;
 
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import data.DataGenerator;
 
+import java.time.Duration;
+
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
@@ -32,21 +36,30 @@ public class PurchasePage {
 
     public void cardPayment() {
         buyButton.click();
-        buyHeading.shouldBe(Condition.visible);
+        buyHeading.shouldBe(visible);
     }
 
     public void cardCredit() {
         creditButton.click();
-        creditHeading.shouldBe(Condition.visible);
+        creditHeading.shouldBe(visible);
+    }
+
+    public void sendingData(DataGenerator.CardInfo info) {
+        cardNumberField.setValue(info.getNumberCard());
+        monthField.setValue(info.getMonth());
+        yearField.setValue(info.getYear());
+        ownerField.setValue(info.getOwner());
+        cvcField.setValue(info.getCvc());
+        continueButton.click();
     }
 
     public void emptyForm() {
         continueButton.click();
-        cardNumberFieldError.shouldBe(Condition.visible);
-        monthFieldError.shouldBe(Condition.visible);
-        yearFieldError.shouldBe(Condition.visible);
-        ownerFieldError.shouldBe(Condition.visible);
-        cvcFieldError.shouldBe(Condition.visible);
+        cardNumberFieldError.shouldBe(visible);
+        monthFieldError.shouldBe(visible);
+        yearFieldError.shouldBe(visible);
+        ownerFieldError.shouldBe(visible);
+        cvcFieldError.shouldBe(visible);
     }
 
     private void cardNumberFieldErrorHidden() {
@@ -62,7 +75,7 @@ public class PurchasePage {
         ownerField.setValue(info.getOwner());
         cvcField.setValue(info.getCvc());
         continueButton.click();
-        cardNumberFieldError.shouldBe(Condition.visible);
+        cardNumberFieldError.shouldBe(visible);
         cardNumberFieldErrorHidden();
     }
 
@@ -79,7 +92,7 @@ public class PurchasePage {
         ownerField.setValue(info.getOwner());
         cvcField.setValue(info.getCvc());
         continueButton.click();
-        monthFieldError.shouldBe(Condition.visible);
+        monthFieldError.shouldBe(visible);
         monthFieldErrorHidden();
     }
 
@@ -96,7 +109,7 @@ public class PurchasePage {
         ownerField.setValue(info.getOwner());
         cvcField.setValue(info.getCvc());
         continueButton.click();
-        yearFieldError.shouldBe(Condition.visible);
+        yearFieldError.shouldBe(visible);
         yearFieldErrorHidden();
     }
 
@@ -113,7 +126,7 @@ public class PurchasePage {
         yearField.setValue(info.getYear());
         cvcField.setValue(info.getCvc());
         continueButton.click();
-        ownerFieldError.shouldBe(Condition.visible);
+        ownerFieldError.shouldBe(visible);
         ownerFieldErrorHidden();
     }
 
@@ -130,7 +143,7 @@ public class PurchasePage {
         yearField.setValue(info.getYear());
         ownerField.setValue(info.getOwner());
         continueButton.click();
-        cvcFieldError.shouldBe(Condition.visible);
+        cvcFieldError.shouldBe(visible);
         cvcFieldErrorHidden();
     }
 
@@ -141,7 +154,7 @@ public class PurchasePage {
         ownerField.setValue(info.getOwner());
         cvcField.setValue(info.getCvc());
         continueButton.click();
-        cardNumberFieldError.shouldBe(Condition.visible);
+        cardNumberFieldError.shouldBe(visible);
         cardNumberFieldErrorHidden();
     }
 
@@ -152,7 +165,7 @@ public class PurchasePage {
         ownerField.setValue(info.getOwner());
         cvcField.setValue(info.getCvc());
         continueButton.click();
-        monthFieldError.shouldBe(Condition.visible);
+        monthFieldError.shouldBe(visible);
         monthFieldErrorHidden();
     }
 
@@ -163,7 +176,7 @@ public class PurchasePage {
         ownerField.setValue(info.getOwner());
         cvcField.setValue(info.getCvc());
         continueButton.click();
-        yearFieldError.shouldBe(Condition.visible);
+        yearFieldError.shouldBe(visible);
         yearFieldErrorHidden();
     }
 
@@ -174,7 +187,7 @@ public class PurchasePage {
         ownerField.setValue(info.getOwner());
         cvcField.setValue(info.getCvc());
         continueButton.click();
-        ownerFieldError.shouldBe(Condition.visible);
+        ownerFieldError.shouldBe(visible);
         ownerFieldErrorHidden();
     }
 
@@ -185,24 +198,15 @@ public class PurchasePage {
         ownerField.setValue(info.getOwner());
         cvcField.setValue(info.getCvc());
         continueButton.click();
-        cvcFieldError.shouldBe(Condition.visible);
+        cvcFieldError.shouldBe(visible);
         cvcFieldErrorHidden();
     }
 
-    public void sendingData(DataGenerator.CardInfo info) {
-        cardNumberField.setValue(info.getNumberCard());
-        monthField.setValue(info.getMonth());
-        yearField.setValue(info.getYear());
-        ownerField.setValue(info.getOwner());
-        cvcField.setValue(info.getCvc());
-        continueButton.click();
-    }
-
     public void bankApproved() {
-        notificationSuccessfully.shouldBe(Condition.visible);
+        notificationSuccessfully.shouldBe(visible, Duration.ofSeconds(15));
     }
 
     public void bankDeclined() {
-        notificationError.shouldBe(Condition.visible);
+        notificationError.shouldBe(visible, Duration.ofSeconds(15));
     }
 }

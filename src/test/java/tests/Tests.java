@@ -1,7 +1,7 @@
-package Tests;
+package tests;
 
 import com.codeborne.selenide.logevents.SelenideLogger;
-import data.PurchasePage;
+import page.PurchasePage;
 import io.qameta.allure.selenide.AllureSelenide;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;

@@ -1,6 +1,7 @@
 package data;
 
 import lombok.SneakyThrows;
+import lombok.val;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 
@@ -11,16 +12,18 @@ import java.sql.DriverManager;
 
         @SneakyThrows
         public static void databaseCleanUp() {
-            var runner = new QueryRunner();
-            var deleteFromOrder = "DELETE FROM order_entity;";
-            var deleteFromCredit = "DELETE FROM credit_request_entity;";
-            var deleteFromPayment = "DELETE FROM payment_entity;";
+            val runner = new QueryRunner();
+            val deleteFromOrder = "DELETE FROM order_entity;";
+            val deleteFromCredit = "DELETE FROM credit_request_entity;";
+            val deleteFromPayment = "DELETE FROM payment_entity;";
 
-            try (var connection = DriverManager.getConnection(
-                    datasource, "app", "pass")) {
+            try (val connection = DriverManager.getConnection (datasource, "app", "pass")) {
                 runner.update(connection, deleteFromOrder);
                 runner.update(connection, deleteFromCredit);
                 runner.update(connection, deleteFromPayment);
+            }
+            catch (Exception e) {
+                System.out.println("SQL exception in databaseCleanUp");
             }
         }
 
