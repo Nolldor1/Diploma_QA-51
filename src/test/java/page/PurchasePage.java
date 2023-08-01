@@ -1,24 +1,18 @@
 package page;
 
-
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-import data.DataGenerator;
+import data.DataGenerator.CardInfo;
 
 import java.time.Duration;
 
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 
 public class PurchasePage {
-    //Кнопка "Купить" и заголовок "Оплата по карте":
-    private final SelenideElement buyButton = $(byText("Купить"));
-    private final SelenideElement buyHeading = $(byText("Оплата по карте"));
-    //Кнопка "Купить в кредит" и заголовок "Кредит по данным карты":
-    private final SelenideElement creditButton = $(byText("Купить в кредит"));
-    private final SelenideElement creditHeading = $(byText("Кредит по данным карты"));
+
     //Форма для ввода данных, со всеми полями ввода, ошибками полей и кнопкой "Продолжить":
     private final SelenideElement cardNumberField = $("input[placeholder='0000 0000 0000 0000']");
     private final SelenideElement cardNumberFieldError = $x("//*[text()='Номер карты']/..//*[@class='input__sub']");
@@ -34,17 +28,7 @@ public class PurchasePage {
     private final SelenideElement notificationError = $(".notification_status_error");
     private final SelenideElement continueButton = $("form button");
 
-    public void cardPayment() {
-        buyButton.click();
-        buyHeading.shouldBe(visible);
-    }
-
-    public void cardCredit() {
-        creditButton.click();
-        creditHeading.shouldBe(visible);
-    }
-
-    public void sendingData(DataGenerator.CardInfo info) {
+    public void sendingData(CardInfo info) {
         cardNumberField.setValue(info.getNumberCard());
         monthField.setValue(info.getMonth());
         yearField.setValue(info.getYear());
@@ -53,154 +37,72 @@ public class PurchasePage {
         continueButton.click();
     }
 
-    public void emptyForm() {
-        continueButton.click();
+    public void invalidCardNumberField() {
+        cardNumberFieldError.shouldHave(text("Неверный формат"));
         cardNumberFieldError.shouldBe(visible);
+    }
+
+    public void invalidMonthField() {
+        monthFieldError.shouldHave(text("Неверно указан срок действия карты"));
         monthFieldError.shouldBe(visible);
+    }
+
+    public void emptyMonthField() {
+        monthFieldError.shouldHave(text("Неверный формат"));
+        monthFieldError.shouldBe(visible);
+    }
+
+    public void invalidYearField() {
+        yearFieldError.shouldHave(text("Неверный формат"));
         yearFieldError.shouldBe(visible);
-        ownerFieldError.shouldBe(visible);
+
+    }
+
+    public void expiredYearField() {
+        yearFieldError.shouldHave(text("Истёк срок действия карты"));
+        yearFieldError.shouldBe(visible);
+
+    }
+
+    public void emptyYearField() {
+        yearFieldError.shouldHave(text("Поле обязательно для заполнения"));
+        yearFieldError.shouldBe(visible);
+
+    }
+
+    public void notificationInvalidYear() {
+        yearFieldError.shouldHave(text("Неверно указан срок действия карты"));
+        yearFieldError.shouldBe(visible);
+    }
+
+    public void invalidCVCField() {
+        cvcFieldError.shouldHave(text("Неверный формат"));
         cvcFieldError.shouldBe(visible);
     }
 
-    private void cardNumberFieldErrorHidden() {
-        monthFieldError.shouldBe(Condition.hidden);
-        yearFieldError.shouldBe(Condition.hidden);
-        ownerFieldError.shouldBe(Condition.hidden);
-        cvcFieldError.shouldBe(Condition.hidden);
-    }
-
-    public void emptyCardNumberField(DataGenerator.CardInfo info) {
-        monthField.setValue(info.getMonth());
-        yearField.setValue(info.getYear());
-        ownerField.setValue(info.getOwner());
-        cvcField.setValue(info.getCvc());
-        continueButton.click();
-        cardNumberFieldError.shouldBe(visible);
-        cardNumberFieldErrorHidden();
-    }
-
-    private void monthFieldErrorHidden() {
-        cardNumberFieldError.shouldBe(Condition.hidden);
-        yearFieldError.shouldBe(Condition.hidden);
-        ownerFieldError.shouldBe(Condition.hidden);
-        cvcFieldError.shouldBe(Condition.hidden);
-    }
-
-    public void emptyMonthField(DataGenerator.CardInfo info) {
-        cardNumberField.setValue(info.getNumberCard());
-        yearField.setValue(info.getYear());
-        ownerField.setValue(info.getOwner());
-        cvcField.setValue(info.getCvc());
-        continueButton.click();
-        monthFieldError.shouldBe(visible);
-        monthFieldErrorHidden();
-    }
-
-    private void yearFieldErrorHidden() {
-        cardNumberFieldError.shouldBe(Condition.hidden);
-        monthFieldError.shouldBe(Condition.hidden);
-        ownerFieldError.shouldBe(Condition.hidden);
-        cvcFieldError.shouldBe(Condition.hidden);
-    }
-
-    public void emptyYearField(DataGenerator.CardInfo info) {
-        cardNumberField.setValue(info.getNumberCard());
-        monthField.setValue(info.getMonth());
-        ownerField.setValue(info.getOwner());
-        cvcField.setValue(info.getCvc());
-        continueButton.click();
-        yearFieldError.shouldBe(visible);
-        yearFieldErrorHidden();
-    }
-
-    private void ownerFieldErrorHidden() {
-        cardNumberFieldError.shouldBe(Condition.hidden);
-        monthFieldError.shouldBe(Condition.hidden);
-        yearFieldError.shouldBe(Condition.hidden);
-        cvcFieldError.shouldBe(Condition.hidden);
-    }
-
-    public void emptyOwnerField(DataGenerator.CardInfo info) {
-        cardNumberField.setValue(info.getNumberCard());
-        monthField.setValue(info.getMonth());
-        yearField.setValue(info.getYear());
-        cvcField.setValue(info.getCvc());
-        continueButton.click();
+    public void invalidOwnerField() {
+        ownerFieldError.shouldHave(text("Неверный формат"));
         ownerFieldError.shouldBe(visible);
-        ownerFieldErrorHidden();
+
     }
 
-    private void cvcFieldErrorHidden() {
-        cardNumberFieldError.shouldBe(Condition.hidden);
-        monthFieldError.shouldBe(Condition.hidden);
-        yearFieldError.shouldBe(Condition.hidden);
-        ownerFieldError.shouldBe(Condition.hidden);
-    }
-
-    public void emptyCVCField(DataGenerator.CardInfo info) {
-        cardNumberField.setValue(info.getNumberCard());
-        monthField.setValue(info.getMonth());
-        yearField.setValue(info.getYear());
-        ownerField.setValue(info.getOwner());
-        continueButton.click();
-        cvcFieldError.shouldBe(visible);
-        cvcFieldErrorHidden();
-    }
-
-    public void invalidCardNumberField(DataGenerator.CardInfo info) {
-        cardNumberField.setValue(info.getNumberCard());
-        monthField.setValue(info.getMonth());
-        yearField.setValue(info.getYear());
-        ownerField.setValue(info.getOwner());
-        cvcField.setValue(info.getCvc());
-        continueButton.click();
+    public void emptyCardNumberField() {
+        cardNumberFieldError.shouldHave(text("Поле обязательно для заполнения"));
         cardNumberFieldError.shouldBe(visible);
-        cardNumberFieldErrorHidden();
     }
 
-    public void invalidMonthField(DataGenerator.CardInfo info) {
-        cardNumberField.setValue(info.getNumberCard());
-        monthField.setValue(info.getMonth());
-        yearField.setValue(info.getYear());
-        ownerField.setValue(info.getOwner());
-        cvcField.setValue(info.getCvc());
-        continueButton.click();
-        monthFieldError.shouldBe(visible);
-        monthFieldErrorHidden();
-    }
-
-    public void invalidYearField(DataGenerator.CardInfo info) {
-        cardNumberField.setValue(info.getNumberCard());
-        monthField.setValue(info.getMonth());
-        yearField.setValue(info.getYear());
-        ownerField.setValue(info.getOwner());
-        cvcField.setValue(info.getCvc());
-        continueButton.click();
-        yearFieldError.shouldBe(visible);
-        yearFieldErrorHidden();
-    }
-
-    public void invalidOwnerField(DataGenerator.CardInfo info) {
-        cardNumberField.setValue(info.getNumberCard());
-        monthField.setValue(info.getMonth());
-        yearField.setValue(info.getYear());
-        ownerField.setValue(info.getOwner());
-        cvcField.setValue(info.getCvc());
-        continueButton.click();
+    public void emptyOwnerField() {
+        ownerFieldError.shouldHave(text("Поле обязательно для заполнения"));
         ownerFieldError.shouldBe(visible);
-        ownerFieldErrorHidden();
+
     }
 
-    public void invalidCVCField(DataGenerator.CardInfo info) {
-        cardNumberField.setValue(info.getNumberCard());
-        monthField.setValue(info.getMonth());
-        yearField.setValue(info.getYear());
-        ownerField.setValue(info.getOwner());
-        cvcField.setValue(info.getCvc());
-        continueButton.click();
-        cvcFieldError.shouldBe(visible);
-        cvcFieldErrorHidden();
+    public void emptyCVCField() {
+        ownerFieldError.shouldHave(text("Поле обязательно для заполнения"));
+        ownerFieldError.shouldBe(visible);
+
     }
+
 
     public void bankApproved() {
         notificationSuccessfully.shouldBe(visible, Duration.ofSeconds(15));

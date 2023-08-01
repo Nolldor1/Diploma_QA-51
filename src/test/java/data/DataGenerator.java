@@ -14,41 +14,47 @@ import java.util.Random;
 
         private DataGenerator() {}
 
-        private static String getIncompleteCardNumber() {
+        public static String getIncompleteCardNumber() {
             //Номер карты без последней цифры:
             return validCard.substring(0,18);
         }
+        public static CardInfo getEmptyCardInfo() {
+            return new CardInfo(" ", " ", " ", " ", " ");
+        }
+        public static CardInfo getEmptyCardNumber() {
+            return new CardInfo(" ", getValidMonth(), getValidYear(), getOwner(), getCVC());
+        }
 
-        private static String getOverdueMonth() {
+        public static String getOverdueMonth() {
             //Текущий месяц - 1 месяц:
             return LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("MM"));
         }
 
-        private static String getLowerMonthValue() {
+        public static String getLowerMonthValue() {
             return "00";
         }
 
-        private static String getGreaterMonthValue() {
+        public static String getGreaterMonthValue() {
             return "13";
         }
 
-        private static String getValidMonth() {
+        public static String getValidMonth() {
             return LocalDate.now().format(DateTimeFormatter.ofPattern("MM"));
         }
 
-        private static String getOverdueYear() {    //Просроченный год, текущий год - 1 год:
+        public static String getOverdueYear() {    //Просроченный год, текущий год - 1 год:
             return LocalDate.now().minusYears(1).format(DateTimeFormatter.ofPattern("yy"));
         }
 
-        private static String getNextYear() {    //Следующий год, текущий год + 1 год:
+        public static String getNextYear() {    //Следующий год, текущий год + 1 год:
             return LocalDate.now().plusYears(1).format(DateTimeFormatter.ofPattern("yy"));
         }
 
-        private static String getYearFromFuture() {    //Год из будущего, текущий год + 6 лет:
+        public static String getYearFromFuture() {    //Год из будущего, текущий год + 6 лет:
             return LocalDate.now().plusYears(6).format(DateTimeFormatter.ofPattern("yy"));
         }
 
-        private static String getValidYear() {
+        public static String getValidYear() {
             return LocalDate.now().format(DateTimeFormatter.ofPattern("yy"));
         }
 
@@ -75,12 +81,12 @@ import java.util.Random;
             return fistNumber + secondNumber;
         }
 
-        private static String getOwner() {
+        public static String getOwner() {
             Faker faker = new Faker();
             return faker.name().fullName();
         }
 
-        private static String getCVC() {
+        public static String getCVC() {
             Random random = new Random();
             var firstNumber = numbers[random.nextInt(10)];
             var secondNumber = getNumbers();
@@ -99,12 +105,18 @@ import java.util.Random;
         public static CardInfo getCardWithIncompleteCardNumber() {
             return new CardInfo(getIncompleteCardNumber(), getValidMonth(), getValidYear(), getOwner(), getCVC());
         }
+        public static CardInfo getCardWithEmptyOwnerValue() {
+            return new CardInfo(validCard, getValidMonth(),  getValidYear(), null, getCVC());
+        }
 
         public static CardInfo getCardWithOverdueMonth() {
             if (getValidMonth().equals("01")) {
                 return new CardInfo(validCard, getOverdueMonth(), getOverdueYear(), getOwner(), getCVC());
             }
             return new CardInfo(validCard, getOverdueMonth(), getValidYear(), getOwner(), getCVC());
+        }
+        public static CardInfo getCardWithEmptyMonthValue() {
+            return new CardInfo(validCard, null, getValidYear(), getOwner(), getCVC());
         }
 
         public static CardInfo getCardWithLowerMonthValue() {
@@ -114,7 +126,9 @@ import java.util.Random;
         public static CardInfo getCardWithGreaterMonthValue() {
             return new CardInfo(validCard, getGreaterMonthValue(), getNextYear(), getOwner(), getCVC());
         }
-
+        public static CardInfo getCardWithEmptyYearValue() {
+            return new CardInfo(validCard, getValidMonth(), null, getOwner(), getCVC());
+        }
         public static CardInfo getCardWithOverdueYear() {
             return new CardInfo(validCard, getValidMonth(), getOverdueYear(), getOwner(), getCVC());
         }
@@ -138,14 +152,17 @@ import java.util.Random;
         public static CardInfo getCardWithIncompleteCVC() {
             return new CardInfo(validCard, getValidMonth(), getValidYear(), getOwner(), getNumbers());
         }
+        public static CardInfo getCardWithEmptyCVC() {
+            return new CardInfo(validCard, getValidMonth(), getValidYear(), getOwner(), null);
+        }
 
         @Value
         public static class CardInfo {
-            private String numberCard;
-            private String month;
-            private String year;
-            private String owner;
-            private String cvc;
+            String numberCard;
+            String month;
+            String year;
+            String owner;
+            String cvc;
         }
     }
 

@@ -1,21 +1,22 @@
-package tests;
+package test;
 
 import com.codeborne.selenide.logevents.SelenideLogger;
-import page.PurchasePage;
+import data.DataGenerator;
 import io.qameta.allure.selenide.AllureSelenide;
-import lombok.SneakyThrows;
+import lombok.val;
 import org.junit.jupiter.api.*;
-
-import java.util.concurrent.TimeUnit;
+import page.PaymentPage;
+import page.PurchasePage;
 
 import static com.codeborne.selenide.Selenide.open;
-import static data.DataGenerator.getApprovedCard;
-import static data.DataHelper.*;
 import static data.DataGenerator.*;
-import static data.DataHelper.getPaymentInfo;
+import static data.DataHelper.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Tests {
+    PaymentPage paymentPage = new PaymentPage();
+    PurchasePage purchasePage = new PurchasePage();
+
     @BeforeAll
     public static void setUpAll() {
         SelenideLogger.addListener("allure", new AllureSelenide());
@@ -37,15 +38,12 @@ public class Tests {
     public class ValidCard {
 
     @Test
-    @SneakyThrows
     @DisplayName("Покупка валидной картой")
     public void shouldPaymentValidCard() {
         var purchasePage = new PurchasePage();
-        purchasePage.cardPayment();
+        paymentPage.cardPayment();
         var info = getApprovedCard();
         purchasePage.sendingData(info);
-        //Время отправки данных в базу данных, в секундах:
-        TimeUnit.SECONDS.sleep(10);
         var expected = "APPROVED";
         var paymentInfo = getPaymentInfo();
         var orderInfo = getOrderInfo();
@@ -58,15 +56,12 @@ public class Tests {
     }
 
     @Test
-    @SneakyThrows
     @DisplayName("Получение кредита на покупку по валидной карте")
     public void shouldCreditValidCard() {
         var purchasePage = new PurchasePage();
-        purchasePage.cardCredit();
+        paymentPage.cardCredit();
         var info = getApprovedCard();
         purchasePage.sendingData(info);
-        //Время отправки данных в базу данных, в секундах:
-        TimeUnit.SECONDS.sleep(10);
         var expected = "APPROVED";
         var creditRequestInfo = getCreditInfo();
         var orderInfo = getOrderInfo();
@@ -83,15 +78,14 @@ public class Tests {
     public class InvalidCard {
 
         @Test
-        @SneakyThrows
         @DisplayName("Покупка не валидной картой")
         public void shouldPaymentInvalidCard() {
             var purchasePage = new PurchasePage();
-            purchasePage.cardPayment();
+            paymentPage.cardPayment();
             var info = getDeclinedCard();
             purchasePage.sendingData(info);
             //Время отправки данных в базу данных, в секундах:
-            TimeUnit.SECONDS.sleep(10);
+            //TimeUnit.SECONDS.sleep(10);
             var expected = "DECLINED";
             var paymentInfo = getPaymentInfo();
             var orderInfo = getOrderInfo();
@@ -104,15 +98,14 @@ public class Tests {
         }
 
         @Test
-        @SneakyThrows
         @DisplayName("Получение кредита на покупку по не валидной карте")
         public void shouldCreditInvalidCard() {
             var purchasePage = new PurchasePage();
-            purchasePage.cardCredit();
+            paymentPage.cardCredit();
             var info = getDeclinedCard();
             purchasePage.sendingData(info);
             //Время отправки данных в базу данных, в секундах:
-            TimeUnit.SECONDS.sleep(10);
+            //TimeUnit.SECONDS.sleep(10);
             var expected = "DECLINED";
             var creditRequestInfo = getCreditInfo();
             var orderInfo = getOrderInfo();
@@ -132,22 +125,30 @@ public class Tests {
         @BeforeEach
         public void setPayment() {
             var purchasePage = new PurchasePage();
-            purchasePage.cardPayment();
+            paymentPage.cardPayment();
+
         }
 
         @Test
         @DisplayName("Отправка пустой формы")
-        public void shouldEmpty() {
+        public void shouldEmptyCardFields() {
             var purchasePage = new PurchasePage();
-            purchasePage.emptyForm();
+            val emptyForm = DataGenerator.getEmptyCardInfo();
+            purchasePage.sendingData(emptyForm);
+            purchasePage.emptyCardNumberField();
+            purchasePage.emptyMonthField();
+            purchasePage.emptyYearField();
+            purchasePage.emptyOwnerField();
+            purchasePage.invalidCVCField();
         }
 
         @Test
         @DisplayName("Поле 'Номер карты', пустое поле")
         public void shouldEmptyCardNumberField() {
             var purchasePage = new PurchasePage();
-            var info = getApprovedCard();
-            purchasePage.emptyCardNumberField(info);
+            var info = getEmptyCardNumber();
+            purchasePage.sendingData(info);
+            purchasePage.emptyCardNumberField();
         }
 
         @Test
@@ -155,15 +156,17 @@ public class Tests {
         public void shouldCardWithIncompleteCardNumber() {
             var purchasePage = new PurchasePage();
             var info = getCardWithIncompleteCardNumber();
-            purchasePage.invalidCardNumberField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidCardNumberField();
         }
 
         @Test
         @DisplayName("Поле 'Месяц', пустое поле")
         public void shouldEmptyMonthField() {
             var purchasePage = new PurchasePage();
-            var info = getApprovedCard();
-            purchasePage.emptyMonthField(info);
+            var info = getCardWithEmptyMonthValue();
+            purchasePage.sendingData(info);
+            purchasePage.emptyMonthField();
         }
 
         @Test
@@ -171,7 +174,8 @@ public class Tests {
         public void shouldCardWithOverdueMonth() {
             var purchasePage = new PurchasePage();
             var info = getCardWithOverdueMonth();
-            purchasePage.invalidMonthField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidMonthField();
         }
 
         @Test
@@ -179,7 +183,8 @@ public class Tests {
         public void shouldCardWithLowerMonthValue() {
             var purchasePage = new PurchasePage();
             var info = getCardWithLowerMonthValue();
-            purchasePage.invalidMonthField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidMonthField();
         }
 
         @Test
@@ -187,15 +192,17 @@ public class Tests {
         public void shouldCardWithGreaterMonthValue() {
             var purchasePage = new PurchasePage();
             var info = getCardWithGreaterMonthValue();
-            purchasePage.invalidMonthField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidMonthField();
         }
 
         @Test
         @DisplayName("Поле 'Год', пустое поле")
         public void shouldEmptyYearField() {
             var purchasePage = new PurchasePage();
-            var info = getApprovedCard();
-            purchasePage.emptyYearField(info);
+            var info = getCardWithEmptyYearValue();
+            purchasePage.sendingData(info);
+            purchasePage.emptyYearField();
         }
 
         @Test
@@ -203,7 +210,8 @@ public class Tests {
         public void shouldCardWithOverdueYear() {
             var purchasePage = new PurchasePage();
             var info = getCardWithOverdueYear();
-            purchasePage.invalidYearField(info);
+            purchasePage.sendingData(info);
+            purchasePage.expiredYearField();
         }
 
         @Test
@@ -211,15 +219,17 @@ public class Tests {
         public void shouldCardWithYearFromFuture() {
             var purchasePage = new PurchasePage();
             var info = getCardWithYearFromFuture();
-            purchasePage.invalidYearField(info);
+            purchasePage.sendingData(info);
+            purchasePage.notificationInvalidYear();
         }
 
         @Test
         @DisplayName("Поле 'Владелец', пустое поле")
         public void shouldEmptyOwnerField() {
             var purchasePage = new PurchasePage();
-            var info = getApprovedCard();
-            purchasePage.emptyOwnerField(info);
+            var info = getCardWithEmptyOwnerValue();
+            purchasePage.sendingData(info);
+            purchasePage.emptyOwnerField();
         }
 
         @Test
@@ -227,7 +237,8 @@ public class Tests {
         public void shouldCardWithSpaceOrHyphenOwner() {
             var purchasePage = new PurchasePage();
             var info = getCardWithSpaceOrHyphenOwner();
-            purchasePage.invalidOwnerField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidOwnerField();
         }
 
         @Test
@@ -235,7 +246,8 @@ public class Tests {
         public void shouldCardWithSpecialSymbolsOwner() {
             var purchasePage = new PurchasePage();
             var info = getCardWithSpecialSymbolsOwner();
-            purchasePage.invalidOwnerField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidOwnerField();
         }
 
         @Test
@@ -243,15 +255,17 @@ public class Tests {
         public void shouldCardWithNumbersOwner() {
             var purchasePage = new PurchasePage();
             var info = getCardWithNumbersOwner();
-            purchasePage.invalidOwnerField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidOwnerField();
         }
 
         @Test
         @DisplayName("Поле 'CVC/CVV', пустое поле")
         public void shouldEmptyCVCField() {
             var purchasePage = new PurchasePage();
-            var info = getApprovedCard();
-            purchasePage.emptyCVCField(info);
+            var info = getCardWithEmptyCVC();
+            purchasePage.sendingData(info);
+            purchasePage.emptyCVCField();
         }
 
         @Test
@@ -259,7 +273,8 @@ public class Tests {
         public void shouldCardWithIncompleteCVC() {
             var purchasePage = new PurchasePage();
             var info = getCardWithIncompleteCVC();
-            purchasePage.invalidCVCField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidCVCField();
         }
     }
 
@@ -270,22 +285,29 @@ public class Tests {
         @BeforeEach
         public void setPayment() {
             var purchasePage = new PurchasePage();
-            purchasePage.cardCredit();
+            paymentPage.cardCredit();
         }
 
         @Test
         @DisplayName("Отправка пустой формы")
-        public void shouldEmpty() {
+        public void shouldEmptyCardFields() {
             var purchasePage = new PurchasePage();
-            purchasePage.emptyForm();
+            val emptyForm = DataGenerator.getEmptyCardInfo();
+            purchasePage.sendingData(emptyForm);
+            purchasePage.emptyCardNumberField();
+            purchasePage.emptyMonthField();
+            purchasePage.emptyYearField();
+            purchasePage.emptyOwnerField();
+            purchasePage.invalidCVCField();
         }
 
         @Test
         @DisplayName("Поле 'Номер карты', пустое поле")
         public void shouldEmptyCardNumberField() {
             var purchasePage = new PurchasePage();
-            var info = getApprovedCard();
-            purchasePage.emptyCardNumberField(info);
+            var info = getEmptyCardNumber();
+            purchasePage.sendingData(info);
+            purchasePage.emptyCardNumberField();
         }
 
         @Test
@@ -293,15 +315,17 @@ public class Tests {
         public void shouldCardWithIncompleteCardNumber() {
             var purchasePage = new PurchasePage();
             var info = getCardWithIncompleteCardNumber();
-            purchasePage.invalidCardNumberField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidCardNumberField();
         }
 
         @Test
         @DisplayName("Поле 'Месяц', пустое поле")
         public void shouldEmptyMonthField() {
             var purchasePage = new PurchasePage();
-            var info = getApprovedCard();
-            purchasePage.emptyMonthField(info);
+            var info = getCardWithEmptyMonthValue();
+            purchasePage.sendingData(info);
+            purchasePage.emptyMonthField();
         }
 
         @Test
@@ -309,7 +333,8 @@ public class Tests {
         public void shouldCardWithOverdueMonth() {
             var purchasePage = new PurchasePage();
             var info = getCardWithOverdueMonth();
-            purchasePage.invalidMonthField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidMonthField();
         }
 
         @Test
@@ -317,7 +342,8 @@ public class Tests {
         public void shouldCardWithLowerMonthValue() {
             var purchasePage = new PurchasePage();
             var info = getCardWithLowerMonthValue();
-            purchasePage.invalidMonthField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidMonthField();
         }
 
         @Test
@@ -325,15 +351,17 @@ public class Tests {
         public void shouldCardWithGreaterMonthValue() {
             var purchasePage = new PurchasePage();
             var info = getCardWithGreaterMonthValue();
-            purchasePage.invalidMonthField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidMonthField();
         }
 
         @Test
         @DisplayName("Поле 'Год', пустое поле")
         public void shouldEmptyYearField() {
             var purchasePage = new PurchasePage();
-            var info = getApprovedCard();
-            purchasePage.emptyYearField(info);
+            var info = getCardWithEmptyYearValue();
+            purchasePage.sendingData(info);
+            purchasePage.emptyYearField();
         }
 
         @Test
@@ -341,7 +369,8 @@ public class Tests {
         public void shouldCardWithOverdueYear() {
             var purchasePage = new PurchasePage();
             var info = getCardWithOverdueYear();
-            purchasePage.invalidYearField(info);
+            purchasePage.sendingData(info);
+            purchasePage.expiredYearField();
         }
 
         @Test
@@ -349,15 +378,17 @@ public class Tests {
         public void shouldCardWithYearFromFuture() {
             var purchasePage = new PurchasePage();
             var info = getCardWithYearFromFuture();
-            purchasePage.invalidYearField(info);
+            purchasePage.sendingData(info);
+            purchasePage.notificationInvalidYear();
         }
 
         @Test
         @DisplayName("Поле 'Владелец', пустое поле")
         public void shouldEmptyOwnerField() {
             var purchasePage = new PurchasePage();
-            var info = getApprovedCard();
-            purchasePage.emptyOwnerField(info);
+            var info = getCardWithEmptyOwnerValue();
+            purchasePage.sendingData(info);
+            purchasePage.emptyOwnerField();
         }
 
         @Test
@@ -365,7 +396,8 @@ public class Tests {
         public void shouldCardWithSpaceOrHyphenOwner() {
             var purchasePage = new PurchasePage();
             var info = getCardWithSpaceOrHyphenOwner();
-            purchasePage.invalidOwnerField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidOwnerField();
         }
 
         @Test
@@ -373,7 +405,8 @@ public class Tests {
         public void shouldCardWithSpecialSymbolsOwner() {
             var purchasePage = new PurchasePage();
             var info = getCardWithSpecialSymbolsOwner();
-            purchasePage.invalidOwnerField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidOwnerField();
         }
 
         @Test
@@ -381,15 +414,17 @@ public class Tests {
         public void shouldCardWithNumbersOwner() {
             var purchasePage = new PurchasePage();
             var info = getCardWithNumbersOwner();
-            purchasePage.invalidOwnerField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidOwnerField();
         }
 
         @Test
         @DisplayName("Поле 'CVC/CVV', пустое поле")
         public void shouldEmptyCVCField() {
             var purchasePage = new PurchasePage();
-            var info = getApprovedCard();
-            purchasePage.emptyCVCField(info);
+            var info = getCardWithEmptyCVC();
+            purchasePage.sendingData(info);
+            purchasePage.emptyCVCField();
         }
 
         @Test
@@ -397,9 +432,10 @@ public class Tests {
         public void shouldCardWithIncompleteCVC() {
             var purchasePage = new PurchasePage();
             var info = getCardWithIncompleteCVC();
-            purchasePage.invalidCVCField(info);
+            purchasePage.sendingData(info);
+            purchasePage.invalidCVCField();
+        }
         }
     }
-}
 
 
