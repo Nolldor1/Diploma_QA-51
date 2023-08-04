@@ -27,11 +27,11 @@
 
 для postgresql: java "-Dspring.datasource.url=jdbc:postgresql://localhost:5432/app" -jar artifacts/aqa-shop.jar
 
-6. Для запуска авто-тестов в Terminal Intellij IDEA открыть новую сессию и ввести команду:
+5. Для запуска авто-тестов в Terminal Intellij IDEA открыть новую сессию и ввести команду:
 
 для mysql: ./gradlew clean test allureReport "-Ddb.url=jdbc:mysql://localhost:3306/app"
 
 для postgresql: ./gradlew clean test allureReport "-Ddb.url=jdbc:postgresql://localhost:5432/app"
 
-9. Для просмотра отчета Allure в терминале ввести команду: ./gradlew allureServe
+6. Для просмотра отчета Allure в терминале ввести команду: ./gradlew allureServe
 
