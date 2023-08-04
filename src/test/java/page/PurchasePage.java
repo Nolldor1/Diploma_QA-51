@@ -5,8 +5,7 @@ import data.DataGenerator.CardInfo;
 
 import java.time.Duration;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
@@ -37,69 +36,25 @@ public class PurchasePage {
         continueButton.click();
     }
 
-    public void invalidCardNumberField() {
-        cardNumberFieldError.shouldHave(text("Неверный формат"));
-        cardNumberFieldError.shouldBe(visible);
+    public void invalidCardNumberField(String expectedErrorMessage) {
+        cardNumberFieldError.shouldHave(exactText(expectedErrorMessage)).shouldBe(visible);
     }
 
-    public void invalidMonthField() {
-        monthFieldError.shouldHave(text("Неверно указан срок действия карты"));
-        monthFieldError.shouldBe(visible);
+    public void invalidMonthField(String expectedErrorMessage) {
+        monthFieldError.shouldHave(exactText(expectedErrorMessage)).shouldBe(visible);
     }
 
-    public void emptyMonthField() {
-        monthFieldError.shouldHave(text("Неверный формат"));
-        monthFieldError.shouldBe(visible);
-    }
-
-    public void invalidYearField() {
-        yearFieldError.shouldHave(text("Неверный формат"));
-        yearFieldError.shouldBe(visible);
+    public void invalidYearField(String expectedErrorMessage) {
+        yearFieldError.shouldHave(exactText(expectedErrorMessage)).shouldBe(visible);
 
     }
 
-    public void expiredYearField() {
-        yearFieldError.shouldHave(text("Истёк срок действия карты"));
-        yearFieldError.shouldBe(visible);
-
+    public void invalidCVCField(String expectedErrorMessage) {
+        cvcFieldError.shouldHave(exactText(expectedErrorMessage)).shouldBe(visible);
     }
 
-    public void emptyYearField() {
-        yearFieldError.shouldHave(text("Поле обязательно для заполнения"));
-        yearFieldError.shouldBe(visible);
-
-    }
-
-    public void notificationInvalidYear() {
-        yearFieldError.shouldHave(text("Неверно указан срок действия карты"));
-        yearFieldError.shouldBe(visible);
-    }
-
-    public void invalidCVCField() {
-        cvcFieldError.shouldHave(text("Неверный формат"));
-        cvcFieldError.shouldBe(visible);
-    }
-
-    public void invalidOwnerField() {
-        ownerFieldError.shouldHave(text("Неверный формат"));
-        ownerFieldError.shouldBe(visible);
-
-    }
-
-    public void emptyCardNumberField() {
-        cardNumberFieldError.shouldHave(text("Поле обязательно для заполнения"));
-        cardNumberFieldError.shouldBe(visible);
-    }
-
-    public void emptyOwnerField() {
-        ownerFieldError.shouldHave(text("Поле обязательно для заполнения"));
-        ownerFieldError.shouldBe(visible);
-
-    }
-
-    public void emptyCVCField() {
-        ownerFieldError.shouldHave(text("Поле обязательно для заполнения"));
-        ownerFieldError.shouldBe(visible);
+    public void invalidOwnerField(String expectedErrorMessage) {
+        ownerFieldError.shouldHave(exactText(expectedErrorMessage)).shouldBe(visible);
 
     }
 
