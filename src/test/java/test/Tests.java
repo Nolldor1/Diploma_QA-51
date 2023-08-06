@@ -11,6 +11,7 @@ import page.PurchasePage;
 import static com.codeborne.selenide.Selenide.open;
 import static data.DataGenerator.*;
 import static data.DataHelper.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Tests {
@@ -45,14 +46,11 @@ public class Tests {
             var info = getApprovedCard();
             purchasePage.sendingData(info);
             var expected = "APPROVED";
-            var paymentInfo = getPaymentInfo();
-            var orderInfo = getOrderInfo();
-            //Проверка соответствия статуса в базе данных в таблице покупок:
-            assertEquals(expected, paymentInfo.getStatus());
-            //Проверка соответствия в базе данных id в таблице покупок и в таблице заявок:
-            assertEquals(paymentInfo.getTransaction_id(), orderInfo.getPayment_id());
-            //Проверка вывода соответствующего уведомления пользователю на странице покупок:
-            purchasePage.bankApproved();
+            assertAll(() -> purchasePage.bankApproved(),
+                    //Проверка соответствия статуса в базе данных в таблице покупок:
+                    () -> assertEquals(expected, getPaymentInfo().getStatus()),
+                    //Проверка соответствия в базе данных id в таблице покупок и в таблице заявок:
+                    () -> assertEquals(getPaymentInfo().getTransaction_id(), getOrderInfo().getPayment_id()));
         }
 
         @Test
@@ -62,14 +60,11 @@ public class Tests {
             var info = getApprovedCard();
             purchasePage.sendingData(info);
             var expected = "APPROVED";
-            var creditRequestInfo = getCreditInfo();
-            var orderInfo = getOrderInfo();
-            //Проверка соответствия статуса в базе данных в таблице запросов кредита:
-            assertEquals(expected, creditRequestInfo.getStatus());
-            //Проверка соответствия в базе данных id в таблице запросов кредита и в таблице заявок:
-            assertEquals(creditRequestInfo.getBank_id(), orderInfo.getCredit_id());
-            //Проверка вывода соответствующего уведомления пользователю на странице покупок:
-            purchasePage.bankApproved();
+            assertAll(() -> purchasePage.bankApproved(),
+                    //Проверка соответствия статуса в базе данных в таблице запросов кредита:
+                    () -> assertEquals(expected, getCreditInfo().getStatus()),
+                    //Проверка соответствия в базе данных id в таблице запросов кредита и в таблице заявок:
+                    () -> assertEquals(getCreditInfo().getBank_id(), getOrderInfo().getCredit_id()));
         }
     }
 
@@ -84,14 +79,11 @@ public class Tests {
             var info = getDeclinedCard();
             purchasePage.sendingData(info);
             var expected = "DECLINED";
-            var paymentInfo = getPaymentInfo();
-            var orderInfo = getOrderInfo();
-            //Проверка соответствия статуса в базе данных в таблице покупок:
-            assertEquals(expected, paymentInfo.getStatus());
-            //Проверка соответствия в базе данных id в таблице покупок и в таблице заявок:
-            assertEquals(paymentInfo.getTransaction_id(), orderInfo.getPayment_id());
-            //Проверка вывода соответствующего уведомления пользователю на странице покупок:
-            purchasePage.bankDeclined();
+            assertAll(() -> purchasePage.bankDeclined(),
+                    //Проверка соответствия статуса в базе данных в таблице покупок:
+                    () -> assertEquals(expected, getPaymentInfo().getStatus()),
+                    //Проверка соответствия в базе данных id в таблице покупок и в таблице заявок:
+                    () -> assertEquals(getPaymentInfo().getTransaction_id(), getOrderInfo().getPayment_id()));
 
         }
 
@@ -102,14 +94,11 @@ public class Tests {
             var info = getDeclinedCard();
             purchasePage.sendingData(info);
             var expected = "DECLINED";
-            var creditRequestInfo = getCreditInfo();
-            var orderInfo = getOrderInfo();
-            //Проверка соответствия статуса в базе данных в таблице запросов кредита:
-            assertEquals(expected, creditRequestInfo.getStatus());
-            //Проверка соответствия в базе данных id в таблице запросов кредита и в таблице заявок:
-            assertEquals(creditRequestInfo.getBank_id(), orderInfo.getCredit_id());
-            //Проверка вывода соответствующего уведомления пользователю на странице покупок:
-            purchasePage.bankApproved();
+            assertAll(() -> purchasePage.bankDeclined(),
+                    //Проверка соответствия статуса в базе данных в таблице запросов кредита:
+                    () -> assertEquals(expected, getCreditInfo().getStatus()),
+                    //Проверка соответствия в базе данных id в таблице запросов кредита и в таблице заявок:
+                    () -> assertEquals(getCreditInfo().getBank_id(), getOrderInfo().getCredit_id()));
         }
     }
 
