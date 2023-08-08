@@ -11,12 +11,10 @@ import java.sql.DriverManager;
 
 public class DataHelper {
     private static Connection connection;
-    private static QueryRunner runner;
 
     @SneakyThrows
     public static void initConnection() {
-        runner = new QueryRunner();
-        connection = DriverManager.getConnection(System.getProperty("db.url"));
+        connection = DriverManager.getConnection(System.getProperty("db.url"), System.getProperty("app"), System.getProperty("pass"));
     }
 
     @SneakyThrows
