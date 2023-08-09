@@ -11,10 +11,13 @@ import java.sql.DriverManager;
 
 public class DataHelper {
     private static Connection connection;
+    private static final String URL = System.getProperty("db.url");
+    private static final String USER = System.getProperty("db.user");
+    private static final String PASSWORD = System.getProperty("db.password");
 
     @SneakyThrows
     public static void initConnection() {
-        connection = DriverManager.getConnection(System.getProperty("db.url"), System.getProperty("app"), System.getProperty("pass"));
+        connection = DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
     @SneakyThrows
